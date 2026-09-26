@@ -1,0 +1,31 @@
+# Miscellaneous
+.DS_Store
+.vscode/settings.json
+
+# Odoo config
+config/odoo.conf
+config/*.conf
+!config/odoo.conf.template
+
+# Odoo data and database dumps
+/filestore/
+/sessions/
+*.sql
+*.dump
+
+# Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Secrets
+/secrets
+
+# Environment variables
+.env
+.env.local
+
+# Docker
+/compose.override.yml

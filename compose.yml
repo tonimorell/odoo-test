@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json
+services:
+  web:
+    image: odoo:19 # Especificar la versión que se vaya a usar
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8069:8069"
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+      # - ./config:/etc/odoo # This is used to override the default Odoo configuration
+      - ./addons:/mnt/extra-addons
+    environment:
+      - ENVIRONMENT=production
+      - PASSWORD_FILE=/run/secrets/postgresql_password
+      # HOST, PORT and USER have default values: db, 5432 and odoo respectively
+    secrets:
+      - postgresql_password
+    command: --dev=all -d odoo -i base
+
+  db:
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgresql_password
+      - POSTGRES_USER=odoo
+    volumes:
+      - odoo-db-data:/var/lib/postgresql
+    secrets:
+      - postgresql_password
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  odoo-web-data:
+  odoo-db-data:
+
+secrets:
+  postgresql_password:
+    file: secrets/odoo-db-password.txt

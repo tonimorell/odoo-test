@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json
+services:
+  # Definimos el servicio Web, en este caso Odoo
+  web:
+    image: odoo:19 # Especificar la versión que se vaya a usar
+    # Indicamos que depende de "db", por lo cual debe ser procesada primero "db"
+    depends_on:
+      - db
+
+    # Port Mapping: indicamos que el puerto 8069 del contenedor se mapea con el mismo puerto en el anfitrión
+    # Permitirá acceder a Odoo mediante http://localhost:8069
+    ports:
+      - "8069:8069"
+
+    # Mapeamos directorios del contenedor a directorios locales para persistencia
+    volumes:
+      - ./volumesOdoo/addons:/mnt/extra-addons
+      - ./volumesOdoo/odoo/filestore:/var/lib/odoo/filestore
+      - ./volumesOdoo/odoo/sessions:/var/lib/odoo/sessions
+
+    # Definimos variables de entorno de Odoo
+    environment:
+      - HOST=db
+      - USER=odoo
+      - PASSWORD=odoo
+
+    # Indica que pasa este parámetro al arrancar el servicio Odoo
+    # -d odoo and -i base to create and populate the database
+    command: --dev=all -d odoo -i base
+
+  # Definimos el servicio de la base de datos
+  db:
+    image: postgres:18
+
+    # Definimos variables de entorno de PostgreSQL
+    environment:
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
+      - POSTGRES_DB=odoo
+
+    # Mapeamos el directorio de datos de PostgreSQL en un directorio local
+    volumes:
+      - ./volumesOdoo/dataPostgreSQL:/var/lib/postgresql
