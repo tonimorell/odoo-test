@@ -2,22 +2,23 @@
 services:
   web:
     image: odoo:19 # Especificar la versión que se vaya a usar
+    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
     ports:
       - "8069:8069"
+      - "8072:8072"
     volumes:
       - odoo-web-data:/var/lib/odoo
-      # - ./config:/etc/odoo # This is used to override the default Odoo configuration
+      - ./config:/etc/odoo
       - ./addons:/mnt/extra-addons
     environment:
-      - ENVIRONMENT=production
       - PASSWORD_FILE=/run/secrets/postgresql_password
       # HOST, PORT and USER have default values: db, 5432 and odoo respectively
     secrets:
       - postgresql_password
-    command: -d odoo -i base
+    command: -d odoo
 
   db:
     image: postgres:18
@@ -31,7 +32,7 @@ services:
     secrets:
       - postgresql_password
     healthcheck:
-      test: ["CMD", "pg_isready"]
+      test: ["CMD", "pg_isready", "-U", "odoo", "-d", "postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
