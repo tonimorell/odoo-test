@@ -156,3 +156,9 @@ nuevo, actualiza la lista de aplicaciones desde la interfaz de Odoo (modo desarr
 | Adjuntos (filestore) | `./filestore` (en tu repo) | ✅ Sí |
 | Sesiones | `./sessions` (en tu repo) | ✅ Sí |
 | Módulos propios | `./addons` (en tu repo) | ✅ Sí |
+
+## Documentación adicional
+
+- [README-avanzado.md](README-avanzado.md) → migraciones de base de datos (actualizar
+  módulos y cambios de versión), réplica de producción en local (filestore, neutralización),
+  réplica vs datos de prueba, y qué volúmenes usa cada fichero compose.
