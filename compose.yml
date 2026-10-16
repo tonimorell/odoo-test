@@ -18,7 +18,7 @@ services:
       # HOST, PORT and USER have default values: db, 5432 and odoo respectively
     secrets:
       - postgresql_password
-    command: -d odoo
+    # command: -d odoo # -d odoo mostrará únicamente la db odoo
 
   db:
     image: postgres:18
